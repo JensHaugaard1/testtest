@@ -84,7 +84,7 @@
       background: #000;
       color: #fff;
       font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       line-height: 1;
       -webkit-text-stroke: 0.1px currentColor;
@@ -114,7 +114,7 @@
       background: #000;
       color: #fff;
       font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       line-height: 1;
       -webkit-text-stroke: 0.1px currentColor;
@@ -129,7 +129,7 @@
       color: rgba(255, 255, 255, 0.9);
       opacity: 1;
       font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
-      font-size: 15px;
+      font-size: 16px;
       font-weight: 700;
       line-height: 1;
       text-transform: uppercase;
@@ -174,6 +174,61 @@
       letter-spacing: 0.04em;
       line-height: 1.1;
       text-transform: uppercase;
+    }
+    .signup-terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-top: 8px;
+      max-height: 0;
+      overflow: hidden;
+      color: #fff;
+      font-size: 10px;
+      line-height: 1.25;
+      opacity: 0;
+      transform: translateY(-4px);
+      transition: opacity 0.25s ease, max-height 0.25s ease, transform 0.25s ease;
+      visibility: hidden;
+    }
+    .signup-terms input {
+      flex: 0 0 auto;
+      width: 12px;
+      height: 12px;
+      margin: 0;
+      appearance: none;
+      border: 1px solid #fff;
+      border-radius: 0;
+      background: #000;
+      cursor: pointer;
+      position: relative;
+    }
+    .signup-terms input:checked {
+      background: #fff;
+    }
+    .signup-terms input:checked::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 3px;
+      width: 3px;
+      height: 6px;
+      border: solid #000;
+      border-width: 0 1px 1px 0;
+      transform: rotate(45deg);
+    }
+    .signup-terms input:focus-visible {
+      outline: 1px solid #fff;
+      outline-offset: 2px;
+    }
+    .signup-terms a {
+      color: #fff;
+      text-decoration: underline;
+    }
+    .signup-wrap:focus-within .signup-terms {
+      max-height: 40px;
+      opacity: 1;
+      transform: translateY(0);
+      visibility: visible;
     }
     .signup-bar.invalid {
       border-color: #fff;
@@ -297,7 +352,7 @@
       }
       .logo {
         top: 24px;
-        width: 120px;
+        width: 272px;
         max-width: none;
       }
       .signup {
@@ -325,44 +380,45 @@
           <input id="signup-email" type="email" name="email" placeholder="EMAIL" aria-label="Email" autocomplete="email" required aria-describedby="signup-status" />
           <button type="submit">TILMELD</button>
         </form>
-        <div id="signup-consent-status" class="consent-message" role="status">ACCEPT COOKIES TO SIGN UP</div>
         <div id="signup-status" class="error-message" role="status" aria-live="polite"></div>
+        <label class="signup-terms">
+          <input id="signup-terms" type="checkbox" required>
+          <span>Ved at acceptere disse vilkår giver du samtykke til, at Ukendt Kunstner og Ukendt Kunstners Management må sende dig nyheder og markedsføring via email. <a id="terms-link" href="#terms-overlay">Vilkår</a>.</span>
+        </label>
       </div>
     </section>
   </main>
-  <button id="terms-button" class="site-control terms-control" type="button" aria-haspopup="dialog" aria-controls="terms-overlay">TERMS</button>
-  <button id="audio-button" class="site-control audio-control" type="button" aria-label="Turn audio on" aria-pressed="false">
+  <button id="terms-button" class="site-control terms-control" type="button" aria-haspopup="dialog" aria-controls="terms-overlay">VILKÅR</button>
+  <button id="audio-button" class="site-control audio-control" type="button" aria-label="Slå lyd til" aria-pressed="false">
     <span class="material-symbols-outlined" aria-hidden="true">volume_off</span>
   </button>
   <div id="terms-overlay" class="terms-overlay" role="dialog" aria-modal="true" aria-labelledby="terms-title">
     <section class="terms-panel">
-      <button id="terms-close" class="terms-close" type="button" aria-label="Close terms">ESC</button>
-      <h2 id="terms-title">GDPR / TERMS</h2>
-      <p>When you sign up, SORT collects your email address so we can send you updates. Your information is handled confidentially and is not sold to third parties.</p>
-      <p>You can unsubscribe at any time. To request access to, correction of, or deletion of your personal data, contact SORT through the email used for this subscription.</p>
-      <p>By submitting your email, you agree to receive SORT updates and accept this privacy notice.</p>
+      <button id="terms-close" class="terms-close" type="button" aria-label="Luk vilkår">LUK</button>
+      <h2 id="terms-title">VILKÅR</h2>
+      <p>Ved at acceptere disse vilkår giver du samtykke til, at Ukendt Kunstner og Ukendt Kunstners Management må sende dig nyheder og markedsføring via email.</p>
+      <p>Vi behandler dit navn og din emailadresse til at sende dig opdateringer om ny musik, koncerter/events, merch og eksklusive tilbud.</p>
+      <p>Du kan til enhver tid trække dit samtykke tilbage via afmeldingslinket i bunden af vores emails.</p>
     </section>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
   <script>
     (function () {
       var backgroundVideo = document.getElementById('background-video');
-      var backgroundAudio = document.getElementById('background-audio');
-      var streamUrl = 'https://sahls.frame.io/encode-hls/66ed64ff-b4a5-4f4f-88e2-a084e8c7ca37/token/eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJleHAiOjE3ODk1OTgzNTgsInN1YiI6eyJhdWRpbyI6WyJzMzovL2ZyYW1laW8tYXNzZXRzLXByb2R1Y3Rpb24vZW5jb2RlLWhscy82NmVkNjRmZi1iNGE1LTRmNGYtODhlMi1hMDg0ZThjN2NhMzcvYWFjX2NoYTIvbWVkaWEtYXVkLm0zdTgiXSwiaWQiOiIyNDVmZjY1OC00OWFhLTRhOWItYWRhYi02MjAyYmJjODA0NGUiLCJ1c2VyX2NvbmZpZyI6eyJhY2NvdW50X2lkIjoiZTdkNmEyMjYtOWJkZS00OGQyLTlkZWYtZDgzYjI5NTI2MmQxIiwiYXNzZXRfaWQiOiI2NmVkNjRmZi1iNGE1LTRmNGYtODhlMi1hMDg0ZThjN2NhMzciLCJwbGF5ZXJfdHlwZSI6ImV4dGVybmFsIiwicHJvamVjdF9pZCI6IjI1Zjg0OGIzLTU0ZmMtNDIxNC1iOTEwLTI0ZjZmNDlmOWRlNiIsInNlc3Npb25faWQiOiIzN2E4ZjVhMC1kZTcyLTQxMmItYjJlNC01NGJjMDc0ZGU2OGQiLCJzaGFyZV9pZCI6IjgzODk0Mjk1LWYzODctNGNjOS05MmU1LTdmZTkxYTRkNDgzMyIsInRlYW1faWQiOiJkYjM4Y2I5NS05N2Q4LTQ2YTEtYWQ1My1jMjQyMTI0MzMzOTAiLCJ1c2VyX2lkIjpudWxsfSwidmlkZW8iOlsiczM6Ly9mcmFtZWlvLWFzc2V0cy1wcm9kdWN0aW9uL2VuY29kZS1obHMvNjZlZDY0ZmYtYjRhNS00ZjRmLTg4ZTItYTA4NGU4YzdjYTM3L2gyNjRfMzYwL21lZGlhLXZpZC5tM3U4IiwiczM6Ly9mcmFtZWlvLWFzc2V0cy1wcm9kdWN0aW9uL2VuY29kZS1obHMvNjZlZDY0ZmYtYjRhNS00ZjRmLTg4ZTItYTA4NGU4YzdjYTM3L2gyNjRfNTQwL21lZGlhLXZpZC5tM3U4IiwiczM6Ly9mcmFtZWlvLWFzc2V0cy1wcm9kdWN0aW9uL2VuY29kZS1obHMvNjZlZDY0ZmYtYjRhNS00ZjRmLTg4ZTItYTA4NGU4YzdjYTM3L2gyNjRfNzIwL21lZGlhLXZpZC5tM3U4IiwiczM6Ly9mcmFtZWlvLWFzc2V0cy1wcm9kdWN0aW9uL2VuY29kZS1obHMvNjZlZDY0ZmYtYjRhNS00ZjRmLTg4ZTItYTA4NGU4YzdjYTM3L2gyNjRfMTA4MF9iZXN0L21lZGlhLXZpZC5tM3U4IiwiczM6Ly9mcmFtZWlvLWFzc2V0cy1wcm9kdWN0aW9uL2VuY29kZS1obHMvNjZlZDY0ZmYtYjRhNS00ZjRmLTg4ZTItYTA4NGU4YzdjYTM3L2gyNjRfMjE2MC9tZWRpYS12aWQubTN1OCJdfX0.J0XEeizb62IEWeofRiSaaJsLUyFdoUIkmVHxYYzxXQY/h264_1080_best/media-vid.m3u8';
+      var streamUrl = 'https://customer-j9in7c11xd7kkhtp.cloudflarestream.com/daf4346c65c7f8e56d92fe286ec1e11d/manifest/video.m3u8';
 
-      var audioStreamUrl = streamUrl.replace(/h264_1080_best\/media-vid\.m3u8$/, 'aac_cha2/media-aud.m3u8');
-
-      if (!backgroundVideo || !backgroundAudio) return;
+      if (!backgroundVideo) return;
       if (backgroundVideo.canPlayType('application/vnd.apple.mpegurl')) {
         backgroundVideo.src = streamUrl;
-        backgroundAudio.src = audioStreamUrl;
       } else if (window.Hls && Hls.isSupported()) {
-        var hls = new Hls();
+        var hls = new Hls({
+          capLevelToPlayerSize: false,
+          startLevel: 3,
+          maxLevel: 4,
+          startFragPrefetch: true
+        });
         hls.loadSource(streamUrl);
         hls.attachMedia(backgroundVideo);
-        var audioHls = new Hls();
-        audioHls.loadSource(audioStreamUrl);
-        audioHls.attachMedia(backgroundAudio);
       }
     }());
   </script>
@@ -377,26 +433,24 @@
       var audioButton = document.getElementById('audio-button');
       var audioIcon = audioButton ? audioButton.querySelector('.material-symbols-outlined') : null;
       var termsButton = document.getElementById('terms-button');
+      var termsLink = document.getElementById('terms-link');
       var termsOverlay = document.getElementById('terms-overlay');
       var termsClose = document.getElementById('terms-close');
 
       function setAudioState(isMuted) {
-        if (!backgroundAudio || !audioButton || !audioIcon) return;
-        backgroundAudio.muted = isMuted;
-        backgroundAudio.volume = isMuted ? 0 : 1;
+        if (!backgroundVideo || !audioButton || !audioIcon) return;
+        backgroundVideo.muted = isMuted;
+        backgroundVideo.volume = isMuted ? 0 : 1;
         audioButton.setAttribute('aria-pressed', String(!isMuted));
-        audioButton.setAttribute('aria-label', isMuted ? 'Turn audio on' : 'Turn audio off');
+        audioButton.setAttribute('aria-label', isMuted ? 'Slå lyd til' : 'Slå lyd fra');
         audioIcon.textContent = isMuted ? 'volume_off' : 'volume_up';
       }
 
       if (audioButton) {
         audioButton.addEventListener('click', function () {
-          var shouldMute = !backgroundAudio.muted;
+          var shouldMute = !backgroundVideo.muted;
           setAudioState(shouldMute);
-          try {
-            backgroundAudio.currentTime = backgroundVideo.currentTime;
-          } catch (error) {}
-          backgroundAudio.play().catch(function () {
+          backgroundVideo.play().catch(function () {
             setAudioState(true);
           });
         });
@@ -411,6 +465,13 @@
 
       if (termsButton) {
         termsButton.addEventListener('click', function () {
+          setTermsVisibility(true);
+        });
+      }
+
+      if (termsLink) {
+        termsLink.addEventListener('click', function (event) {
+          event.preventDefault();
           setTermsVisibility(true);
         });
       }
@@ -440,25 +501,13 @@
 
       var signupForm = document.getElementById('klaviyo-signup-form');
       var emailInput = document.getElementById('signup-email');
-      var signupButton = signupForm ? signupForm.querySelector('button[type="submit"]') : null;
-      var consentStatus = document.getElementById('signup-consent-status');
+      var signupTerms = document.getElementById('signup-terms');
       var errorMessage = document.querySelector('.error-message');
       var submitted = false;
 
       function hasCookieConsent() {
         return Boolean(window.Cookiebot && Cookiebot.consent && Cookiebot.consent.marketing);
       }
-
-      function updateSignupAvailability() {
-        var isAllowed = hasCookieConsent() && !submitted;
-        if (emailInput) emailInput.disabled = !isAllowed;
-        if (signupButton) signupButton.disabled = !isAllowed;
-        if (consentStatus) consentStatus.style.display = isAllowed ? 'none' : 'block';
-      }
-
-      window.addEventListener('CookiebotOnAccept', updateSignupAvailability);
-      window.addEventListener('CookiebotOnDecline', updateSignupAvailability);
-      updateSignupAvailability();
 
       function isValidEmail(value) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -494,7 +543,14 @@
           event.preventDefault();
           if (submitted) return;
           if (!hasCookieConsent()) {
-            updateSignupAvailability();
+            errorMessage.textContent = 'ACCEPTER COOKIES FOR AT TILMELDE DIG';
+            errorMessage.style.display = 'block';
+            return;
+          }
+          if (!signupTerms || !signupTerms.checked) {
+            errorMessage.textContent = 'ACCEPTER VILKÅR FOR AT TILMELDE DIG';
+            errorMessage.style.display = 'block';
+            if (signupTerms) signupTerms.focus();
             return;
           }
           var email = emailInput ? emailInput.value.trim() : '';
