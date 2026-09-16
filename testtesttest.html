@@ -383,7 +383,7 @@
         <div id="signup-status" class="error-message" role="status" aria-live="polite"></div>
         <label class="signup-terms">
           <input id="signup-terms" type="checkbox" required>
-          <span>Ved at acceptere disse vilkår giver du samtykke til, at Ukendt Kunstner og Ukendt Kunstners Management må sende dig nyheder og markedsføring via email. <a id="terms-link" href="#terms-overlay">Vilkår</a>.</span>
+          <span>Jeg giver hermed samtykke til, at Ukendt Kunstner og Ukendt Kunstners management må sende mig nyheder og markedsføring via e-mail. <a id="terms-link" href="#terms-overlay">Vilkår</a>.</span>
         </label>
       </div>
     </section>
@@ -396,9 +396,9 @@
     <section class="terms-panel">
       <button id="terms-close" class="terms-close" type="button" aria-label="Luk vilkår">LUK</button>
       <h2 id="terms-title">VILKÅR</h2>
-      <p>Ved at acceptere disse vilkår giver du samtykke til, at Ukendt Kunstner og Ukendt Kunstners Management må sende dig nyheder og markedsføring via email.</p>
-      <p>Vi behandler dit navn og din emailadresse til at sende dig opdateringer om ny musik, koncerter/events, merch og eksklusive tilbud.</p>
-      <p>Du kan til enhver tid trække dit samtykke tilbage via afmeldingslinket i bunden af vores emails.</p>
+      <p>Jeg giver hermed samtykke til, at Ukendt Kunstner og Ukendt Kunstners management må sende mig nyheder og markedsføring via e-mail.</p>
+      <p>Vi behandler dit navn og din e-mailadresse med det formål at sende dig nyhedsbreve og andre informationer. Vi deler ikke dine oplysninger med tredjepart uden dit samtykke.</p>
+      <p>Du kan til enhver tid trække dit samtykke tilbage via linket i bunden af vores e-mails.</p>
     </section>
   </div>
   <script src="https://cdn.jsdelivr.net/npm/hls.js@1.5.15/dist/hls.min.js"></script>
@@ -408,6 +408,11 @@
       var streamUrl = 'https://customer-j9in7c11xd7kkhtp.cloudflarestream.com/daf4346c65c7f8e56d92fe286ec1e11d/manifest/video.m3u8';
 
       if (!backgroundVideo) return;
+      backgroundVideo.loop = true;
+      backgroundVideo.addEventListener('ended', function () {
+        backgroundVideo.currentTime = 0;
+        backgroundVideo.play().catch(function () {});
+      });
       if (backgroundVideo.canPlayType('application/vnd.apple.mpegurl')) {
         backgroundVideo.src = streamUrl;
       } else if (window.Hls && Hls.isSupported()) {
