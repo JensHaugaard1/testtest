@@ -160,6 +160,21 @@
       color: #fff;
       border: 1px solid #fff;
     }
+    .signup-bar input:disabled,
+    .signup-bar button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+    .consent-message {
+      margin-top: 4px;
+      color: #fff;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
     .signup-bar.invalid {
       border-color: #fff;
     }
@@ -214,9 +229,10 @@
     }
     .audio-control { right: 20px; }
     .terms-control {
-      left: 20px;
+      left: 50%;
       width: auto;
       padding: 0;
+      transform: translateX(-50%);
       font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
       font-size: 12px;
       font-weight: 700;
@@ -281,7 +297,7 @@
       }
       .logo {
         top: 24px;
-        width: 120px);
+        width: 120px;
         max-width: none;
       }
       .signup {
@@ -291,7 +307,6 @@
         align-self: end;
       }
       .audio-control { right: 16px; }
-      .terms-control { left: 16px; }
       .terms-overlay { padding: 64px 20px 84px; }
     }
   </style>
@@ -310,6 +325,7 @@
           <input id="signup-email" type="email" name="email" placeholder="EMAIL" aria-label="Email" autocomplete="email" required aria-describedby="signup-status" />
           <button type="submit">TILMELD</button>
         </form>
+        <div id="signup-consent-status" class="consent-message" role="status">ACCEPT COOKIES TO SIGN UP</div>
         <div id="signup-status" class="error-message" role="status" aria-live="polite"></div>
       </div>
     </section>
@@ -424,8 +440,25 @@
 
       var signupForm = document.getElementById('klaviyo-signup-form');
       var emailInput = document.getElementById('signup-email');
+      var signupButton = signupForm ? signupForm.querySelector('button[type="submit"]') : null;
+      var consentStatus = document.getElementById('signup-consent-status');
       var errorMessage = document.querySelector('.error-message');
       var submitted = false;
+
+      function hasCookieConsent() {
+        return Boolean(window.Cookiebot && Cookiebot.consent && Cookiebot.consent.marketing);
+      }
+
+      function updateSignupAvailability() {
+        var isAllowed = hasCookieConsent() && !submitted;
+        if (emailInput) emailInput.disabled = !isAllowed;
+        if (signupButton) signupButton.disabled = !isAllowed;
+        if (consentStatus) consentStatus.style.display = isAllowed ? 'none' : 'block';
+      }
+
+      window.addEventListener('CookiebotOnAccept', updateSignupAvailability);
+      window.addEventListener('CookiebotOnDecline', updateSignupAvailability);
+      updateSignupAvailability();
 
       function isValidEmail(value) {
         return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
@@ -460,6 +493,10 @@
         signupForm.addEventListener('submit', async function (event) {
           event.preventDefault();
           if (submitted) return;
+          if (!hasCookieConsent()) {
+            updateSignupAvailability();
+            return;
+          }
           var email = emailInput ? emailInput.value.trim() : '';
 
           if (!email || !isValidEmail(email)) {
