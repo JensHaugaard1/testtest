@@ -80,17 +80,15 @@
     #signup {
       position: fixed;
       left: 50%;
-      top: 50%;
+      top: 38%;
       transform: translate(-50%, -50%);
       z-index: 7;
       opacity: 0;
       pointer-events: none;
-      transition: opacity 1s ease, top 0.2s ease;
+      transition: opacity 1s ease;
       display: flex;
-      flex-direction: column;
       justify-content: center;
       align-items: center;
-      gap: 24px;
     }
     #signup.visible {
       opacity: 1;
@@ -131,8 +129,12 @@
       padding: 2px 6px;
     }
     .signup-wrap {
+      position: fixed;
+      left: 50%;
+      top: 0;
+      transform: translate(-50%, -50%);
       width: min(360px, 82vw);
-      margin: 0 auto;
+      transition: transform 0.2s ease;
     }
     .signup-bar {
       display: flex;
@@ -751,15 +753,43 @@
 
       clearInvalidState();
 
-      function centerSignupInViewport() {
-        if (!signup || !window.visualViewport) return;
+      var signupWrap = signupForm ? signupForm.closest('.signup-wrap') : null;
+      var plakatImg = document.querySelector('.plakat-mockup');
+      var emailFieldOffset = 0;
+      var wrapGap = 24;
+
+      // Anchors .signup-wrap to a fixed point just below the poster, using the
+      // same "top + translate(-50%)" trick as the poster itself: the wrap's
+      // visual center stays pinned to that point, so when the terms text folds
+      // out below the field, the box grows symmetrically around it (moving the
+      // field up) without ever touching the poster, which isn't part of this box.
+      function updateSignupWrapAnchor() {
+        if (!signup || !signupWrap || !signupForm) return;
+        var signupRect = signup.getBoundingClientRect();
+        var anchorY = signupRect.bottom + wrapGap + signupForm.offsetHeight / 2;
+        signupWrap.style.top = (anchorY - signupRect.top) + 'px';
+      }
+
+      updateSignupWrapAnchor();
+      if (plakatImg && !plakatImg.complete) {
+        plakatImg.addEventListener('load', updateSignupWrapAnchor);
+      }
+      window.addEventListener('resize', updateSignupWrapAnchor);
+
+      function centerEmailFieldInViewport() {
+        if (!signupWrap || !signupForm) return;
         var vv = window.visualViewport;
-        signup.style.top = (vv.offsetTop + vv.height / 2) + 'px';
+        var viewportCenter = vv ? (vv.offsetTop + vv.height / 2) : (window.innerHeight / 2);
+        var formRect = signupForm.getBoundingClientRect();
+        var formCenter = formRect.top + formRect.height / 2;
+        emailFieldOffset += viewportCenter - formCenter;
+        signupWrap.style.transform = 'translate(-50%, calc(-50% + ' + emailFieldOffset + 'px))';
       }
 
       function resetSignupPosition() {
-        if (!signup) return;
-        signup.style.top = '';
+        if (!signupWrap) return;
+        signupWrap.style.transform = '';
+        emailFieldOffset = 0;
       }
 
       if (emailInput) {
@@ -772,17 +802,18 @@
 
         emailInput.addEventListener('focus', function () {
           document.body.classList.add('email-focused');
-          if (!window.visualViewport) return;
-          centerSignupInViewport();
-          window.visualViewport.addEventListener('resize', centerSignupInViewport);
-          window.visualViewport.addEventListener('scroll', centerSignupInViewport);
+          centerEmailFieldInViewport();
+          if (window.visualViewport) {
+            window.visualViewport.addEventListener('resize', centerEmailFieldInViewport);
+            window.visualViewport.addEventListener('scroll', centerEmailFieldInViewport);
+          }
         });
 
         emailInput.addEventListener('blur', function () {
           document.body.classList.remove('email-focused');
           if (window.visualViewport) {
-            window.visualViewport.removeEventListener('resize', centerSignupInViewport);
-            window.visualViewport.removeEventListener('scroll', centerSignupInViewport);
+            window.visualViewport.removeEventListener('resize', centerEmailFieldInViewport);
+            window.visualViewport.removeEventListener('scroll', centerEmailFieldInViewport);
           }
           resetSignupPosition();
         });
