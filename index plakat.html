@@ -1,0 +1,868 @@
+<!doctype html>
+<html lang="da">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#000000">
+  <title>SORT</title>
+  <script id="Cookiebot" src="https://consent.cookiebot.com/uc.js" data-cbid="1987d376-843d-439f-ac83-6b0e75b83b5b" data-blockingmode="auto" type="text/javascript"></script>
+  <script data-cookieconsent="ignore">
+    function hideCookieBanner() {
+      var banner = document.getElementById('cookiebanner');
+      console.log('hideCookieBanner kaldt, banner fundet:', !!banner);
+      if (!banner) return;
+      banner.classList.remove('visible');
+      banner.style.setProperty('display', 'none', 'important');
+    }
+    window.addEventListener('CookiebotOnDialogDisplay', function () {
+      console.log('CookiebotOnDialogDisplay fyret');
+      var banner = document.getElementById('cookiebanner');
+      if (banner) {
+        banner.style.removeProperty('display');
+        banner.classList.add('visible');
+      }
+    });
+    window.addEventListener('CookiebotOnAccept', hideCookieBanner);
+    window.addEventListener('CookiebotOnDecline', hideCookieBanner);
+
+    function ukConsent(marketingAccepted) {
+      console.log('ukConsent kaldt med marketing =', marketingAccepted, ', Cookiebot findes:', !!window.Cookiebot);
+      if (window.Cookiebot && typeof Cookiebot.submitCustomConsent === 'function') {
+        Cookiebot.submitCustomConsent(false, false, marketingAccepted);
+      }
+      hideCookieBanner();
+    }
+  </script>
+  <link rel="dns-prefetch" href="//customer-j9in7c11xd7kkhtp.cloudflarestream.com">
+  <link rel="preconnect" href="https://customer-j9in7c11xd7kkhtp.cloudflarestream.com" crossorigin>
+  <style>
+    * { box-sizing: border-box; }
+    :root { color-scheme: dark; font-family: Arial, Helvetica, sans-serif; background: #000; color: #fff; }
+    html, body { margin: 0; width: 100%; height: 100%; background: #000; }
+    body { overflow: hidden; }
+    .video-bg {
+      position: fixed;
+      inset: 0;
+      width: 100vw;
+      height: 100vh;
+      z-index: 0;
+      pointer-events: none;
+      background: #000;
+      overflow: hidden;
+      transition: filter 0.3s ease;
+    }
+    .video-bg iframe {
+      position: absolute;
+      inset: 50% auto auto 50%;
+      width: 100vw;
+      height: 100vh;
+      min-width: 177.78vh;
+      min-height: 56.25vw;
+      display: block;
+      border: 0;
+      background: #000;
+      transform: translate(-50%, -50%);
+      pointer-events: none;
+      object-fit: cover;
+    }
+    main {
+      position: relative;
+      z-index: 1;
+      min-height: 100vh;
+      min-height: 100svh;
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      justify-content: center;
+      padding: 64px 24px 40px;
+    }
+    .signup { width: min(400px, 100%); margin-top: 40px; }
+    #signup {
+      position: fixed;
+      left: 50%;
+      top: 50%;
+      transform: translate(-50%, -50%);
+      z-index: 7;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 1s ease, top 0.2s ease;
+      display: flex;
+      flex-direction: column;
+      justify-content: center;
+      align-items: center;
+      gap: 24px;
+    }
+    #signup.visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
+    .plakat-mockup {
+      display: block;
+      width: min(380px, 82vw);
+      max-height: 56vh;
+      height: auto;
+      object-fit: contain;
+      margin: 0 auto;
+      transition: filter 0.3s ease;
+    }
+    body.email-focused .video-bg {
+      filter: blur(5px) brightness(0.5);
+    }
+    body.email-focused .plakat-mockup {
+      filter: blur(5px) brightness(0.55);
+    }
+    .signup-bar {
+      display: flex;
+    }
+    .signup-bar input {
+      flex: 1;
+      min-width: 160px;
+      border: none;
+      outline: none;
+      background: #000;
+      color: #fff;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      -webkit-text-stroke: 0.1px currentColor;
+      text-transform: uppercase;
+      letter-spacing: 0em;
+      padding: 2px 6px;
+    }
+    .signup-wrap {
+      width: min(360px, 82vw);
+      margin: 0 auto;
+    }
+    .signup-bar {
+      display: flex;
+      width: 100%;
+      min-height: 36px;
+      border: 1px solid #fff;
+      background: #000;
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0;
+    }
+    .signup-bar input {
+      flex: 1 1 auto;
+      min-width: 0;
+      border: none;
+      outline: none;
+      background: #000;
+      color: #fff;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      -webkit-text-stroke: 0.1px currentColor;
+      text-transform: uppercase;
+      letter-spacing: 0em;
+      padding: 0 16px;
+      text-align: left;
+      min-height: 34px;
+      border-right: 1px solid #fff;
+    }
+    .signup-bar input::placeholder {
+      color: rgba(255, 255, 255, 0.9);
+      opacity: 1;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 16px;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0em;
+    }
+    .signup-bar.submitted input {
+      opacity: 0.55;
+    }
+    .signup-bar.submitted input::placeholder { color: #fff; }
+    .signup-bar.submitted button {
+      cursor: default;
+      opacity: 1;
+    }
+    .signup-bar button {
+      flex: 0 0 auto;
+      border: none;
+      outline: none;
+      background: #fff;
+      color: #000;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 15px;
+      font-weight: 700;
+      line-height: 1;
+      text-transform: uppercase;
+      letter-spacing: 0em;
+      padding: 0 6px;
+      min-width: 86px;
+      min-height: 32px;
+      cursor: pointer;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    .signup-bar button:hover {
+      background: transparent;
+      color: #fff;
+      border: 1px solid #fff;
+    }
+    .signup-bar input:disabled,
+    .signup-bar button:disabled {
+      cursor: not-allowed;
+      opacity: 0.55;
+    }
+    .consent-message {
+      margin-top: 4px;
+      color: #fff;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      text-transform: uppercase;
+    }
+    .signup-terms-wrap {
+      display: grid;
+      grid-template-rows: 0fr;
+      transition: grid-template-rows 0.25s ease;
+    }
+    .signup-terms {
+      display: flex;
+      align-items: flex-start;
+      gap: 6px;
+      margin-top: 0;
+      overflow: hidden;
+      min-height: 0;
+      color: #fff;
+      font-size: 10px;
+      line-height: 1.25;
+      opacity: 0;
+      transform: translateY(-4px);
+      pointer-events: none;
+      transition: opacity 0.25s ease, transform 0.25s ease, margin-top 0.25s ease;
+    }
+    .signup-terms input {
+      flex: 0 0 auto;
+      width: 12px;
+      height: 12px;
+      margin: 0;
+      appearance: none;
+      border: 1px solid #fff;
+      border-radius: 0;
+      background: #000;
+      cursor: pointer;
+      position: relative;
+    }
+    .signup-terms input:checked {
+      background: #fff;
+    }
+    .signup-terms input:checked::after {
+      content: '';
+      position: absolute;
+      top: 1px;
+      left: 3px;
+      width: 3px;
+      height: 6px;
+      border: solid #000;
+      border-width: 0 1px 1px 0;
+      transform: rotate(45deg);
+    }
+    .signup-terms input:focus-visible {
+      outline: 1px solid #fff;
+      outline-offset: 2px;
+    }
+    @media (max-width: 600px) {
+      .signup-terms input {
+        width: 22px;
+        height: 22px;
+      }
+
+      .signup-terms input:checked::after {
+        top: 3px;
+        left: 7px;
+        width: 5px;
+        height: 10px;
+      }
+    }
+    .signup-terms a {
+      color: #fff;
+      text-decoration: underline;
+    }
+    .signup-wrap.signup-started .signup-terms-wrap {
+      grid-template-rows: 1fr;
+    }
+    .signup-wrap.signup-started .signup-terms {
+      margin-top: 8px;
+      opacity: 1;
+      transform: translateY(0);
+      pointer-events: auto;
+    }
+    .signup-bar.invalid {
+      border-color: #fff;
+    }
+    .signup-bar input.invalid {
+      color: #fff !important;
+    }
+    .signup-wrap .error-message {
+      width: 100%;
+      margin-top: 4px;
+      color: #fff;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 10px;
+      font-weight: 700;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+      line-height: 1.1;
+      display: none;
+      pointer-events: none;
+      text-align: left;
+    }
+    .signup-bar.invalid ~ .error-message {
+      display: block;
+    }
+    .signup-bar label {
+      position: absolute;
+      width: 1px;
+      height: 1px;
+      overflow: hidden;
+      clip: rect(0, 0, 0, 0);
+      white-space: nowrap;
+    }
+    .site-control {
+      position: fixed;
+      bottom: max(20px, env(safe-area-inset-bottom));
+      z-index: 8;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      width: 30px;
+      height: 30px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+    }
+    .site-control:hover,
+    .site-control:focus-visible {
+      background: #fff;
+      color: #000;
+      outline: none;
+    }
+    .audio-control { right: 20px; }
+    .privacy-control {
+      left: 50%;
+      width: auto;
+      padding: 0;
+      transform: translateX(-50%);
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+    }
+    .audio-icon {
+      width: 21px;
+      height: 21px;
+      display: block;
+    }
+    .site-control:hover .audio-icon,
+    .site-control:focus-visible .audio-icon {
+      filter: invert(1);
+    }
+    .privacy-overlay {
+      position: fixed;
+      inset: 0;
+      z-index: 10000;
+      display: none;
+      padding: 72px max(24px, 8vw) 96px;
+      overflow-y: auto;
+      -webkit-overflow-scrolling: touch;
+      overscroll-behavior: contain;
+      background: #000;
+    }
+    .privacy-overlay.visible { display: flex; }
+    .privacy-panel {
+      position: relative;
+      width: min(680px, 100%);
+      margin: 0 auto;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      line-height: 1.45;
+    }
+    .privacy-panel h2 {
+      margin: 0 0 20px;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 20px;
+      letter-spacing: 0.04em;
+    }
+    .privacy-panel h3 {
+      margin: 24px 0 10px;
+      font-family: 'Arial Narrow', 'Roboto Condensed', Arial, sans-serif;
+      font-size: 14px;
+      letter-spacing: 0.03em;
+    }
+    .privacy-panel p { margin: 0 0 14px; font-size: 13px; }
+    .privacy-panel ul {
+      margin: 0 0 14px;
+      padding-left: 18px;
+      font-size: 13px;
+    }
+    .privacy-panel li { margin: 0 0 6px; }
+    .privacy-panel a { color: #fff; }
+    .privacy-close {
+      position: absolute;
+      top: -4px;
+      right: 0;
+      border: 0;
+      background: transparent;
+      color: #fff;
+      cursor: pointer;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 12px;
+      font-weight: 700;
+      letter-spacing: 0.04em;
+      line-height: 1;
+    }
+    .privacy-close:hover,
+    .privacy-close:focus-visible { color: #aaa; outline: none; }
+    @media (max-width: 600px) {
+      main {
+        display: grid;
+        grid-template-columns: minmax(0, 1fr);
+        grid-template-rows: minmax(260px, 1fr) auto;
+        justify-items: center;
+        align-items: center;
+        min-height: 100svh;
+        padding: 24px 16px max(12px, env(safe-area-inset-bottom));
+        overflow-x: clip;
+      }
+      .signup {
+        width: 100%;
+        min-width: 0;
+        margin-top: 24px;
+        align-self: end;
+      }
+      .plakat-mockup {
+        width: min(420px, 78vw);
+        max-height: 50vh;
+      }
+      .site-control {
+        bottom: max(18px, calc(env(safe-area-inset-bottom) - 2px));
+      }
+      .audio-control { right: 16px; }
+      .privacy-overlay { padding: 64px 20px 84px; }
+    }
+    #cookiebanner {
+      position: fixed;
+      left: 0;
+      right: 0;
+      bottom: 0;
+      z-index: 9999;
+      display: none;
+      background: #111;
+      color: #fff;
+      font-family: Arial, Helvetica, sans-serif;
+      font-size: 13px;
+      line-height: 1.4;
+      padding: 16px max(16px, 4vw);
+    }
+    #cookiebanner.visible {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      justify-content: space-between;
+      gap: 16px;
+    }
+    #cookiebanner .c-header {
+      margin: 0 0 4px;
+      font-weight: 700;
+    }
+    #cookiebanner .c-message {
+      margin: 0;
+      max-width: 640px;
+    }
+    #cookiebanner #c-settings {
+      margin-top: 10px;
+      display: flex;
+      flex-direction: column;
+      gap: 6px;
+    }
+    #cookiebanner .c-option {
+      display: flex;
+      align-items: center;
+      gap: 6px;
+      font-size: 12px;
+      cursor: pointer;
+    }
+    #cookiebanner #c-right {
+      display: flex;
+      flex-wrap: wrap;
+      align-items: center;
+      gap: 10px;
+    }
+    #cookiebanner .c-link {
+      color: #fff;
+      text-decoration: underline;
+      cursor: pointer;
+    }
+    #cookiebanner .c-button {
+      display: inline-block;
+      color: #fff;
+      background: none;
+      border: 1px solid #fff;
+      padding: 6px 14px;
+      cursor: pointer;
+      text-decoration: none;
+      transition: background-color 0.2s ease, color 0.2s ease;
+    }
+    #cookiebanner .c-button:hover {
+      background: #fff;
+      color: #000;
+    }
+    #CybotCookiebotDialog {
+      display: none !important;
+    }
+  </style>
+</head>
+<body>
+  <div class="video-bg">
+    <iframe id="background-player" src="https://customer-j9in7c11xd7kkhtp.cloudflarestream.com/90ed742221bea621ebe100fa4428eb70/iframe?preload=true&amp;loop=true&amp;autoplay=true&amp;muted=true&amp;letterboxColor=black&amp;poster=https%3A%2F%2Fcustomer-j9in7c11xd7kkhtp.cloudflarestream.com%2F90ed742221bea621ebe100fa4428eb70%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600&amp;controls=false" loading="eager" fetchpriority="high" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope" allowfullscreen="true" webkitallowfullscreen="true" aria-hidden="true"></iframe>
+  </div>
+  <main>
+    <section id="signup" class="signup" aria-label="Tilmeld dig SORT">
+      <img class="plakat-mockup" src="Plakat mockup.png" alt="Plakat mockup">
+      <div class="signup-wrap">
+        <form id="klaviyo-signup-form" class="signup-bar" novalidate>
+          <label for="signup-email">Email</label>
+          <input id="signup-email" type="email" name="email" placeholder="EMAIL" aria-label="Email" autocomplete="email" required aria-describedby="signup-status" />
+          <button type="submit">TILMELD</button>
+        </form>
+        <div id="signup-status" class="error-message" role="status" aria-live="polite"></div>
+        <div class="signup-terms-wrap">
+          <label class="signup-terms">
+            <input id="signup-terms" type="checkbox" required>
+            <span>Ved tilmelding accepterer du, at RCA Records behandler dit navn og din e-mailadresse med henblik på at sende nyhedsbreve samt opdateringer vedrørende Ukendt Kunstner, herunder information om nye udgivelser, arrangementer, koncerter, merchandise og øvrige relevante nyheder. RCA Records kan videregive dit navn og din mailadresse til Ukendt Kunstner og Ukendt Kunstners manager i forbindelse med markedsføring af Ukendt Kunstner. Du kan til enhver tid trække dit samtykke tilbage ved at benytte afmeldingslinket i vores e-mails. Læs mere om vores behandling af dine personoplysninger i vores <a id="privacy-link" href="#privacy-overlay">privatlivspolitik</a>.</span>
+          </label>
+        </div>
+      </div>
+    </section>
+  </main>
+  <button id="privacy-button" class="site-control privacy-control" type="button" aria-haspopup="dialog" aria-controls="privacy-overlay">PRIVATLIVSPOLITIK</button>
+  <button id="audio-button" class="site-control audio-control" type="button" aria-label="Slå lyd til" aria-pressed="false">
+    <img id="audio-icon" class="audio-icon" src="volume_off.svg" alt="" aria-hidden="true" width="21" height="21">
+  </button>
+  <div id="privacy-overlay" class="privacy-overlay" role="dialog" aria-modal="true" aria-labelledby="privacy-title">
+    <section class="privacy-panel">
+      <button id="privacy-close" class="privacy-close" type="button" aria-label="Luk privatlivspolitik">LUK</button>
+      <h2 id="privacy-title">PRIVATLIVSPOLITIK</h2>
+      <h3>RCA's behandling af dine oplysninger, når du tilmelder dig nyhedsbrevet</h3>
+      <p>Det er RCA Records Denmark som er dataansvarlig for behandlingen af dine personoplysninger i forbindelse med udsendelse af nyhedsbrevet.</p>
+      <p>Du finder vores kontaktoplysninger her:</p>
+      <p>
+        RCA Records Denmark<br>
+        Sony Music Entertainment Denmark A/S<br>
+        CVR.nr. 12259484<br>
+        Vognmagergade 7, 6.<br>
+        1120 København K
+      </p>
+      <p>Hvis du har spørgsmål til vores behandling af dine personoplysninger, er du velkommen til at kontakte os på e-mail <a href="mailto:contact.dk@rcarecords.com">contact.dk@rcarecords.com</a>.</p>
+
+      <h3>Formål og behandlingsgrundlag</h3>
+      <p>Vi behandler oplysninger om dig i form af din e-mailadresse og i nogle tilfælde dit navn. Vi indsamler oplysningerne om dig med henblik på at sende dig nyhedsbreve samt opdateringer vedrørende Ukendt Kunstner, herunder information om nye udgivelser, arrangementer, koncerter, merchandise og øvrige relevante nyheder.</p>
+      <p>Hvis du har tilmeldt dig for at modtage opdateringer om en kunstner, kan vi dele dit navn og din e-mailadresse med den pågældende kunstner og/eller dennes managementselskab. De vil herefter behandle oplysningerne med henblik på at sende dig nyheder, opdateringer og anden information om kunstneren.</p>
+      <p>Hjemlen til behandling af dine personoplysninger i forbindelse med din tilmelding til vores nyhedsbrev er databeskyttelsesforordningens art. 6, stk. 1, litra a (samtykke).</p>
+
+      <h3>Dine rettigheder</h3>
+      <p>Du har efter databeskyttelsesforordningen en række rettigheder i forhold til vores behandling af oplysninger om dig, herunder bl.a.:</p>
+      <ul>
+        <li>Ret til at se de oplysninger, som vi behandler om dig (indsigtsret)</li>
+        <li>Ret til sletning</li>
+        <li>Ret til berigtigelse (rettelse)</li>
+        <li>Ret til indsigelse mod behandling af dine personoplysninger</li>
+      </ul>
+      <p>Hvis behandlingen af dine personoplysninger er baseret på dit samtykke, kan du til enhver tid trække samtykket tilbage ved at afmelde nyhedsbrevet. Vi sletter herefter din e-mailadresse. Tilbagetrækning påvirker ikke lovligheden af den behandling, der er sket før afmeldingen.</p>
+      <p>Du har ret til indsigt i de personoplysninger, vi behandler om dig, samt ret til berigtigelse, sletning, begrænsning af behandling, indsigelse og i visse tilfælde dataportabilitet.</p>
+      <p>Ønsker du at gøre brug af dine rettigheder, kan du kontakte os. For at behandle din anmodning kan vi bede om oplysninger, der gør det muligt at identificere dig, fx navn og e-mailadresse. Vi besvarer din henvendelse hurtigst muligt.</p>
+
+      <h3>Kontakt</h3>
+      <p>Hvis du ønsker at afmelde nyhedsbrevet, kan du altid afmelde dette via link nederst i mailen med nyhedsbrevet eller kontakte os via <a href="mailto:contact.dk@rcarecords.com">contact.dk@rcarecords.com</a>.</p>
+      <p>Hvis du har klager vedrørende behandlingen af dine personoplysninger bedes du kontakte på <a href="mailto:persondata@sonymusic.com">persondata@sonymusic.com</a>. Du kan også indgive en klage til Datatilsynet, Borgergade 28, 5, 1300 København K, telefon 33 19 32 00, e-mail <a href="mailto:dt@datatilsynet.dk">dt@datatilsynet.dk</a>.</p>
+
+      <h3>Hvor længe vi opbevarer dine oplysninger</h3>
+      <p>Vi sletter dine personoplysninger, når vi ikke længere har behov for at behandle dem til at opfylde et eller flere af de formål, som fremgår ovenfor. Særlige lovregler, herunder i fx bogførings- eller forældelsesloven, kan dog give os pligt eller ret til at opbevare dem i længere tid. Oplysningerne kan også behandles og opbevares længere, hvis de er anonymiseret.</p>
+      <p>Når vi behandler dine oplysninger til markedsføringsformål eller med dit samtykke vil vi behandle dine oplysninger indtil du trækker dette tilbage, hvorefter vi sletter dine personoplysninger. Vi vil dog beholde oplysningen om, at du ikke længere ønsker at modtage markedsføringsmateriale fra os.</p>
+
+      <h3>Ændringer i vores privatlivspolitik</h3>
+      <p>Vi kan til enhver tid ændre, tilpasse eller på anden måde opdatere denne privatlivspolitik. Vi vil angive evt. ændringer ved at opdatere datoen øverst i politikken. Du opfordres til jævnligt at gennemgå politikken.</p>
+    </section>
+  </div>
+  <div id="cookiebanner" lang="da" dir="ltr" role="dialog" aria-live="polite" aria-label="Cookiemeddelelse" ng-non-bindable>
+    <div id="c-left">
+      <p class="c-header">Vi bruger cookies</p>
+      <p class="c-message">Vi bruger nødvendige cookies for at få hjemmesiden til at fungere korrekt, samt marketing-cookies fra vores nyhedsbrevsudbyder. Du kan til enhver tid ændre dit valg.</p>
+      <div id="c-settings" style="display:none">
+        <label class="c-option"><input type="checkbox" checked disabled> Nødvendige (altid aktive)</label>
+        <label class="c-option"><input type="checkbox" id="c-marketing"> Marketing (nyhedsbrevsudbyder)</label>
+      </div>
+    </div>
+    <div id="c-right">
+      <a href="javascript:void(0)" id="c-toggle" class="c-link"
+         onclick="document.getElementById('c-settings').style.display='block';this.style.display='none';document.getElementById('c-save').style.display='inline-block';">Indstillinger</a>
+      <a href="javascript:void(0)" id="c-save" class="c-button" style="display:none"
+         onclick="ukConsent(document.getElementById('c-marketing').checked)">Gem valg</a>
+      <a href="javascript:void(0)" class="c-button" onclick="ukConsent(false)">Afvis alle</a>
+      <a href="javascript:void(0)" class="c-button" onclick="ukConsent(true)">Accepter alle</a>
+    </div>
+    <div style="clear:both"></div>
+  </div>
+  <script src="https://embed.cloudflarestream.com/embed/sdk.latest.js"></script>
+  <script async type="text/plain" data-cookieconsent="marketing" src="https://static.klaviyo.com/onsite/js/UGDnnH/klaviyo.js?company_id=UGDnnH"></script>
+  <script type="text/javascript">
+    // Initialize Klaviyo's command queue while its script loads.
+    !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
+
+    document.addEventListener('DOMContentLoaded', function () {
+      var backgroundPlayer = document.getElementById('background-player');
+      var streamPlayer = null;
+      var audioMuted = true;
+      var audioButton = document.getElementById('audio-button');
+      var audioIcon = document.getElementById('audio-icon');
+      var privacyButton = document.getElementById('privacy-button');
+      var privacyLink = document.getElementById('privacy-link');
+      var privacyOverlay = document.getElementById('privacy-overlay');
+      var privacyClose = document.getElementById('privacy-close');
+
+      function initializeStreamPlayer() {
+        if (!backgroundPlayer || streamPlayer || typeof Stream !== 'function') return;
+        streamPlayer = Stream(backgroundPlayer);
+        streamPlayer.addEventListener('loadedmetadata', function () {
+          setAudioState(audioMuted);
+        });
+        setAudioState(audioMuted);
+      }
+
+      function setAudioState(isMuted) {
+        if (!streamPlayer || !audioButton || !audioIcon) return;
+        streamPlayer.muted = isMuted;
+        streamPlayer.volume = isMuted ? 0 : 1;
+        audioButton.setAttribute('aria-pressed', String(!isMuted));
+        audioButton.setAttribute('aria-label', isMuted ? 'Slå lyd til' : 'Slå lyd fra');
+        audioIcon.src = isMuted ? 'volume_off.svg' : 'volume_up.svg';
+      }
+
+      if (audioButton) {
+        audioButton.addEventListener('click', function () {
+          initializeStreamPlayer();
+          if (!streamPlayer) return;
+          audioMuted = !audioMuted;
+          setAudioState(audioMuted);
+          streamPlayer.play().catch(function () { audioMuted = true; setAudioState(true); });
+        });
+      }
+
+      if (backgroundPlayer) backgroundPlayer.addEventListener('load', initializeStreamPlayer);
+      initializeStreamPlayer();
+      setAudioState(true);
+
+      function startMutedPlayback() {
+        initializeStreamPlayer();
+        if (!streamPlayer) return;
+        setAudioState(true);
+        streamPlayer.play().catch(function () {});
+        document.removeEventListener('touchstart', startMutedPlayback);
+        document.removeEventListener('pointerdown', startMutedPlayback);
+      }
+
+      document.addEventListener('touchstart', startMutedPlayback, { passive: true });
+      document.addEventListener('pointerdown', startMutedPlayback);
+
+      function setPrivacyVisibility(isVisible) {
+        if (!privacyOverlay) return;
+        privacyOverlay.classList.toggle('visible', isVisible);
+        document.body.style.overflow = isVisible ? 'hidden' : '';
+        if (isVisible && privacyClose) privacyClose.focus();
+      }
+
+      if (privacyButton) {
+        privacyButton.addEventListener('click', function () {
+          setPrivacyVisibility(true);
+        });
+      }
+
+      if (privacyLink) {
+        privacyLink.addEventListener('click', function (event) {
+          event.preventDefault();
+          setPrivacyVisibility(true);
+        });
+      }
+
+      function openPrivacyFromHash() {
+        if (window.location.hash === '#privacy-overlay') setPrivacyVisibility(true);
+      }
+
+      window.addEventListener('hashchange', openPrivacyFromHash);
+      openPrivacyFromHash();
+
+      if (privacyClose) {
+        privacyClose.addEventListener('click', function () {
+          setPrivacyVisibility(false);
+        });
+      }
+
+      if (privacyOverlay) {
+        privacyOverlay.addEventListener('click', function (event) {
+          if (event.target === privacyOverlay) setPrivacyVisibility(false);
+        });
+      }
+
+      document.addEventListener('keydown', function (event) {
+        if (event.key === 'Escape') setPrivacyVisibility(false);
+      });
+
+      var signup = document.getElementById('signup');
+      if (signup) {
+        signup.classList.add('visible');
+      }
+
+      var signupForm = document.getElementById('klaviyo-signup-form');
+      var emailInput = document.getElementById('signup-email');
+      var signupTerms = document.getElementById('signup-terms');
+      var errorMessage = document.querySelector('.error-message');
+      var submitted = false;
+
+      function isValidEmail(value) {
+        return /^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(value);
+      }
+
+      function showInvalidState() {
+        if (!signupForm || !emailInput || !errorMessage) return;
+        signupForm.classList.add('invalid');
+        emailInput.classList.remove('invalid');
+        emailInput.setAttribute('aria-invalid', 'true');
+        errorMessage.textContent = 'Indtast en gyldig e-mailadresse.';
+        errorMessage.style.display = 'block';
+      }
+
+      function clearInvalidState() {
+        if (!signupForm || !emailInput || !errorMessage) return;
+        signupForm.classList.remove('invalid');
+        emailInput.classList.remove('invalid');
+        emailInput.setAttribute('aria-invalid', 'false');
+        errorMessage.style.display = 'none';
+      }
+
+      clearInvalidState();
+
+      function centerSignupInViewport() {
+        if (!signup || !window.visualViewport) return;
+        var vv = window.visualViewport;
+        signup.style.top = (vv.offsetTop + vv.height / 2) + 'px';
+      }
+
+      function resetSignupPosition() {
+        if (!signup) return;
+        signup.style.top = '';
+      }
+
+      if (emailInput) {
+        emailInput.addEventListener('input', function () {
+          clearInvalidState();
+          if (emailInput.value.trim()) {
+            emailInput.closest('.signup-wrap').classList.add('signup-started');
+          }
+        });
+
+        emailInput.addEventListener('focus', function () {
+          document.body.classList.add('email-focused');
+          if (!window.visualViewport) return;
+          centerSignupInViewport();
+          window.visualViewport.addEventListener('resize', centerSignupInViewport);
+          window.visualViewport.addEventListener('scroll', centerSignupInViewport);
+        });
+
+        emailInput.addEventListener('blur', function () {
+          document.body.classList.remove('email-focused');
+          if (window.visualViewport) {
+            window.visualViewport.removeEventListener('resize', centerSignupInViewport);
+            window.visualViewport.removeEventListener('scroll', centerSignupInViewport);
+          }
+          resetSignupPosition();
+        });
+      }
+
+      if (signupForm) {
+        signupForm.addEventListener('submit', async function (event) {
+          event.preventDefault();
+          if (submitted) return;
+          if (!signupTerms || !signupTerms.checked) {
+            errorMessage.textContent = 'ACCEPTER PRIVATLIVSPOLITIK FOR AT TILMELDE DIG';
+            errorMessage.style.display = 'block';
+            if (signupTerms) signupTerms.focus();
+            return;
+          }
+          var email = emailInput ? emailInput.value.trim() : '';
+
+          if (!email || !isValidEmail(email)) {
+            showInvalidState();
+            if (emailInput) emailInput.focus();
+            return;
+          }
+
+          clearInvalidState();
+
+          var button = signupForm.querySelector('button');
+          if (button.disabled) return;
+          button.disabled = true;
+          button.textContent = 'SENDER…';
+          emailInput.readOnly = true;
+          signupForm.setAttribute('aria-busy', 'true');
+          var controller = new AbortController();
+          var timeout = setTimeout(function () { controller.abort(); }, 15000);
+          try {
+            var response = await fetch('https://a.klaviyo.com/client/subscriptions/?company_id=UGDnnH', {
+              method: 'POST',
+              headers: {
+                'Content-Type': 'application/vnd.api+json',
+                'Accept': 'application/vnd.api+json',
+                'revision': '2026-07-15'
+              },
+              signal: controller.signal,
+              body: JSON.stringify({ data: {
+                type: 'subscription',
+                attributes: {
+                  custom_source: 'SORT website signup',
+                  profile: { data: { type: 'profile', attributes: {
+                    email: email,
+                    subscriptions: { email: { marketing: { consent: 'SUBSCRIBED' } } }
+                  } } }
+                },
+                relationships: { list: { data: { type: 'list', id: 'RZ4r3t' } } }
+              } })
+            });
+            if (response.status !== 202) {
+              throw new Error(response.status === 429 ? 'rate_limit' : 'request_failed');
+            }
+            signupForm.reset();
+            submitted = true;
+            signupForm.closest('.signup-wrap').classList.remove('signup-started');
+            emailInput.placeholder = 'EMAIL';
+            emailInput.setAttribute('aria-label', 'Tak — din tilmeldingsanmodning er modtaget');
+            signupForm.classList.add('submitted');
+            button.textContent = 'TAK';
+            errorMessage.textContent = '';
+          } catch (error) {
+            errorMessage.textContent = error.message === 'rate_limit'
+              ? 'For mange forsøg. Vent lidt, og prøv igen.'
+              : 'Vi kunne ikke bekræfte tilmeldingen. Prøv igen om lidt.';
+          } finally {
+            clearTimeout(timeout);
+            button.disabled = submitted;
+            button.textContent = submitted ? 'TAK' : 'TILMELD';
+            emailInput.readOnly = submitted;
+            signupForm.removeAttribute('aria-busy');
+            errorMessage.style.display = submitted ? 'none' : 'block';
+          }
+        });
+      }
+    });
+  </script>
+</body>
+</html>
