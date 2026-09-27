@@ -98,6 +98,7 @@
       object-fit: contain;
       margin: 0 auto;
       transition: filter 0.3s ease;
+      padding-bottom: 12px;
     }
     body.email-focused .video-bg {
       filter: blur(5px) brightness(0.5);
@@ -789,6 +790,18 @@
         emailFieldOffset = 0;
       }
 
+      // iOS Safari scrolls the document to bring a focused input "into view"
+      // even though body is overflow:hidden and nothing here is meant to
+      // scroll — our own layout is fully handled via position:fixed plus
+      // centerEmailFieldInViewport(). Left alone, that native scroll shoves
+      // everything toward the bottom. Pin the document scroll back to 0
+      // whenever it moves while the field is focused.
+      function pinWindowScroll() {
+        if (window.scrollX !== 0 || window.scrollY !== 0) {
+          window.scrollTo(0, 0);
+        }
+      }
+
       if (emailInput) {
         emailInput.addEventListener('input', function () {
           clearInvalidState();
@@ -800,6 +813,8 @@
         emailInput.addEventListener('focus', function () {
           document.body.classList.add('email-focused');
           centerEmailFieldInViewport();
+          pinWindowScroll();
+          window.addEventListener('scroll', pinWindowScroll, { passive: true });
           if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', centerEmailFieldInViewport);
             window.visualViewport.addEventListener('scroll', centerEmailFieldInViewport);
@@ -808,6 +823,7 @@
 
         emailInput.addEventListener('blur', function () {
           document.body.classList.remove('email-focused');
+          window.removeEventListener('scroll', pinWindowScroll);
           if (window.visualViewport) {
             window.visualViewport.removeEventListener('resize', centerEmailFieldInViewport);
             window.visualViewport.removeEventListener('scroll', centerEmailFieldInViewport);
