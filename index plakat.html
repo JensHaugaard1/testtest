@@ -106,12 +106,6 @@
     body.email-focused .plakat-mockup {
       filter: blur(5px) brightness(0.55);
     }
-    body.email-focused .signup-wrap {
-      /* While focused, iOS keeps re-firing the viewport events that recompute
-         this position; animating each one on top of the last is what looked
-         like flicker, so snap instead of transitioning until it settles. */
-      transition: none;
-    }
     .signup-bar {
       display: flex;
     }
@@ -137,7 +131,7 @@
       top: 0;
       transform: translate(-50%, -50%);
       width: min(360px, 82vw);
-      transition: transform 0.2s ease;
+      opacity: 1;
     }
     .signup-bar {
       display: flex;
@@ -725,6 +719,7 @@
       var signupForm = document.getElementById('klaviyo-signup-form');
       var emailInput = document.getElementById('signup-email');
       var signupTerms = document.getElementById('signup-terms');
+      var submitButton = signupForm ? signupForm.querySelector('button') : null;
       var errorMessage = document.querySelector('.error-message');
       var submitted = false;
 
@@ -755,6 +750,7 @@
       var plakatImg = document.querySelector('.plakat-mockup');
       var emailFieldOffset = 0;
       var wrapGap = 40;
+      var settleTransitionTimer = null;
 
       // Anchors .signup-wrap to a fixed point just below the poster, using the
       // same "top + translate(-50%)" trick as the poster itself: the wrap's
@@ -808,14 +804,31 @@
       if (emailInput) {
         emailInput.addEventListener('input', function () {
           clearInvalidState();
-          if (emailInput.value.trim()) {
-            emailInput.closest('.signup-wrap').classList.add('signup-started');
-          }
         });
 
         emailInput.addEventListener('focus', function () {
           document.body.classList.add('email-focused');
-          centerEmailFieldInViewport();
+          if (signupWrap) signupWrap.classList.add('signup-started');
+          // Instead of animating the move itself (which kept looking like a
+          // jump/slide given how the position gets recalculated), fade the
+          // field out, snap it straight to the centered spot while it's
+          // invisible, then fade it back in — hides the repositioning
+          // entirely instead of trying to make it look smooth.
+          clearTimeout(settleTransitionTimer);
+          if (signupWrap) {
+            signupWrap.style.transition = 'opacity 0.15s ease';
+            signupWrap.style.opacity = '0';
+          }
+          settleTransitionTimer = setTimeout(function () {
+            centerEmailFieldInViewport();
+            if (signupWrap) {
+              // Force layout so the fade-in starts from the new position
+              // instead of animating anything about the move itself.
+              void signupWrap.offsetHeight;
+              signupWrap.style.transition = 'opacity 0.2s ease';
+              signupWrap.style.opacity = '1';
+            }
+          }, 150);
           if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', centerEmailFieldInViewport);
             window.visualViewport.addEventListener('scroll', centerEmailFieldInViewport);
@@ -824,11 +837,36 @@
 
         emailInput.addEventListener('blur', function () {
           document.body.classList.remove('email-focused');
+          clearTimeout(settleTransitionTimer);
+          if (signupWrap) {
+            signupWrap.style.transition = '';
+            signupWrap.style.opacity = '';
+          }
           if (window.visualViewport) {
             window.visualViewport.removeEventListener('resize', centerEmailFieldInViewport);
             window.visualViewport.removeEventListener('scroll', centerEmailFieldInViewport);
           }
           resetSignupPosition();
+        });
+      }
+
+      // Keep the email field focused (keyboard open, layout centered) when
+      // ticking the terms checkbox — preventing the default action on
+      // mousedown stops the browser from shifting focus to the checkbox,
+      // while the 'click' that follows still toggles it normally.
+      var signupTermsLabel = signupTerms ? signupTerms.closest('label') : null;
+      if (signupTermsLabel) {
+        signupTermsLabel.addEventListener('mousedown', function (event) {
+          event.preventDefault();
+        });
+      }
+
+      // Same idea for the submit button: stay focused (and centered) through
+      // validation errors or a failed request, and only drop focus once the
+      // signup actually succeeds (handled in the submit handler below).
+      if (submitButton) {
+        submitButton.addEventListener('mousedown', function (event) {
+          event.preventDefault();
         });
       }
 
@@ -852,7 +890,7 @@
 
           clearInvalidState();
 
-          var button = signupForm.querySelector('button');
+          var button = submitButton;
           if (button.disabled) return;
           button.disabled = true;
           button.textContent = 'SENDER…';
@@ -892,6 +930,10 @@
             signupForm.classList.add('submitted');
             button.textContent = 'TAK';
             errorMessage.textContent = '';
+            // Only drop focus (undoing the centered/blurred layout) once the
+            // signup has actually succeeded — validation errors and failed
+            // requests keep the field focused so the user can just retry.
+            if (emailInput) emailInput.blur();
           } catch (error) {
             errorMessage.textContent = error.message === 'rate_limit'
               ? 'For mange forsøg. Vent lidt, og prøv igen.'
