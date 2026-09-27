@@ -712,8 +712,20 @@
       });
 
       var signup = document.getElementById('signup');
-      if (signup) {
-        signup.classList.add('visible');
+      var plakatImg = document.querySelector('.plakat-mockup');
+
+      // Reveal the poster and the email form together as one fade-in, once
+      // the (large) poster image has actually finished loading — otherwise
+      // the text/email form fade in on schedule while the image itself pops
+      // in separately whenever it happens to finish downloading.
+      function revealSignup() {
+        if (signup) signup.classList.add('visible');
+      }
+      if (plakatImg && !plakatImg.complete) {
+        plakatImg.addEventListener('load', revealSignup, { once: true });
+        plakatImg.addEventListener('error', revealSignup, { once: true });
+      } else {
+        revealSignup();
       }
 
       var signupForm = document.getElementById('klaviyo-signup-form');
@@ -747,7 +759,6 @@
       clearInvalidState();
 
       var signupWrap = signupForm ? signupForm.closest('.signup-wrap') : null;
-      var plakatImg = document.querySelector('.plakat-mockup');
       var emailFieldOffset = 0;
       var wrapGap = 40;
       var settleTransitionTimer = null;
