@@ -51,19 +51,15 @@
       overflow: hidden;
       transition: filter 0.3s ease;
     }
-    .video-bg iframe {
+    .video-bg video {
       position: absolute;
-      inset: 50% auto auto 50%;
-      width: 100vw;
-      height: 100vh;
-      min-width: 177.78vh;
-      min-height: 56.25vw;
+      inset: 0;
+      width: 100%;
+      height: 100%;
       display: block;
-      border: 0;
       background: #000;
-      transform: translate(-50%, -50%);
-      pointer-events: none;
       object-fit: cover;
+      pointer-events: none;
     }
     main {
       position: relative;
@@ -526,7 +522,7 @@
 </head>
 <body>
   <div class="video-bg">
-    <iframe id="background-player" src="https://customer-j9in7c11xd7kkhtp.cloudflarestream.com/90ed742221bea621ebe100fa4428eb70/iframe?preload=true&amp;loop=true&amp;autoplay=true&amp;muted=true&amp;letterboxColor=black&amp;poster=https%3A%2F%2Fcustomer-j9in7c11xd7kkhtp.cloudflarestream.com%2F90ed742221bea621ebe100fa4428eb70%2Fthumbnails%2Fthumbnail.jpg%3Ftime%3D%26height%3D600&amp;controls=false" loading="eager" fetchpriority="high" allow="autoplay; fullscreen; picture-in-picture; encrypted-media; gyroscope" allowfullscreen="true" webkitallowfullscreen="true" aria-hidden="true"></iframe>
+    <video id="background-player" data-cookieconsent="ignore" autoplay muted loop playsinline preload="auto" poster="https://customer-j9in7c11xd7kkhtp.cloudflarestream.com/90ed742221bea621ebe100fa4428eb70/thumbnails/thumbnail.jpg?height=600" aria-hidden="true"></video>
   </div>
   <main>
     <section id="signup" class="signup" aria-label="Tilmeld dig SORT">
@@ -615,16 +611,15 @@
     </div>
     <div style="clear:both"></div>
   </div>
-  <script src="https://embed.cloudflarestream.com/embed/sdk.latest.js"></script>
+  <script data-cookieconsent="ignore" src="https://cdn.jsdelivr.net/npm/hls.js@1/dist/hls.min.js"></script>
   <script async type="text/plain" data-cookieconsent="marketing" src="https://static.klaviyo.com/onsite/js/UGDnnH/klaviyo.js?company_id=UGDnnH"></script>
   <script type="text/javascript">
     // Initialize Klaviyo's command queue while its script loads.
     !function(){if(!window.klaviyo){window._klOnsite=window._klOnsite||[];try{window.klaviyo=new Proxy({},{get:function(n,i){return"push"===i?function(){var n;(n=window._klOnsite).push.apply(n,arguments)}:function(){for(var n=arguments.length,o=new Array(n),w=0;w<n;w++)o[w]=arguments[w];var t="function"==typeof o[o.length-1]?o.pop():void 0,e=new Promise((function(n){window._klOnsite.push([i].concat(o,[function(i){t&&t(i),n(i)}]))}));return e}}})}catch(n){window.klaviyo=window.klaviyo||[],window.klaviyo.push=function(){var n;(n=window._klOnsite).push.apply(n,arguments)}}}}();
 
     document.addEventListener('DOMContentLoaded', function () {
-      var backgroundPlayer = document.getElementById('background-player');
-      var streamPlayer = null;
-      var audioMuted = true;
+      var video = document.getElementById('background-player');
+      var hlsSrc = 'https://customer-j9in7c11xd7kkhtp.cloudflarestream.com/90ed742221bea621ebe100fa4428eb70/manifest/video.m3u8';
       var audioButton = document.getElementById('audio-button');
       var audioIcon = document.getElementById('audio-icon');
       var privacyButton = document.getElementById('privacy-button');
@@ -632,19 +627,22 @@
       var privacyOverlay = document.getElementById('privacy-overlay');
       var privacyClose = document.getElementById('privacy-close');
 
-      function initializeStreamPlayer() {
-        if (!backgroundPlayer || streamPlayer || typeof Stream !== 'function') return;
-        streamPlayer = Stream(backgroundPlayer);
-        streamPlayer.addEventListener('loadedmetadata', function () {
-          setAudioState(audioMuted);
-        });
-        setAudioState(audioMuted);
+      if (video) {
+        if (window.Hls && Hls.isSupported()) {
+          var hls = new Hls();
+          hls.loadSource(hlsSrc);
+          hls.attachMedia(video);
+        } else if (video.canPlayType('application/vnd.apple.mpegurl')) {
+          video.src = hlsSrc; // Safari / iOS play HLS natively
+        }
+        video.muted = true;
+        video.play().catch(function () {});
       }
 
       function setAudioState(isMuted) {
-        if (!streamPlayer || !audioButton || !audioIcon) return;
-        streamPlayer.muted = isMuted;
-        streamPlayer.volume = isMuted ? 0 : 1;
+        if (!video || !audioButton || !audioIcon) return;
+        video.muted = isMuted;
+        video.volume = 1;
         audioButton.setAttribute('aria-pressed', String(!isMuted));
         audioButton.setAttribute('aria-label', isMuted ? 'Slå lyd til' : 'Slå lyd fra');
         audioIcon.src = isMuted ? 'volume_off.svg' : 'volume_up.svg';
@@ -652,23 +650,16 @@
 
       if (audioButton) {
         audioButton.addEventListener('click', function () {
-          initializeStreamPlayer();
-          if (!streamPlayer) return;
-          audioMuted = !audioMuted;
-          setAudioState(audioMuted);
-          streamPlayer.play().catch(function () { audioMuted = true; setAudioState(true); });
+          if (!video) return;
+          setAudioState(!video.muted);
+          video.play().catch(function () { setAudioState(true); });
         });
       }
 
-      if (backgroundPlayer) backgroundPlayer.addEventListener('load', initializeStreamPlayer);
-      initializeStreamPlayer();
       setAudioState(true);
 
       function startMutedPlayback() {
-        initializeStreamPlayer();
-        if (!streamPlayer) return;
-        setAudioState(true);
-        streamPlayer.play().catch(function () {});
+        if (video && video.paused) video.play().catch(function () {});
         document.removeEventListener('touchstart', startMutedPlayback);
         document.removeEventListener('pointerdown', startMutedPlayback);
       }
@@ -756,7 +747,7 @@
       var signupWrap = signupForm ? signupForm.closest('.signup-wrap') : null;
       var plakatImg = document.querySelector('.plakat-mockup');
       var emailFieldOffset = 0;
-      var wrapGap = 24;
+      var wrapGap = 40;
 
       // Anchors .signup-wrap to a fixed point just below the poster, using the
       // same "top + translate(-50%)" trick as the poster itself: the wrap's
