@@ -771,9 +771,15 @@
         if (!signupWrap || !signupForm) return;
         var vv = window.visualViewport;
         var viewportCenter = vv ? (vv.offsetTop + vv.height / 2) : (window.innerHeight / 2);
+        // iOS fires several visualViewport resize/scroll events while the keyboard
+        // animates in, each mid-transition. Measuring against the un-shifted base
+        // position (instead of accumulating on top of the last, possibly still-
+        // animating, offset) keeps this idempotent instead of compounding into a
+        // runaway offset that flings the field off-screen.
+        signupWrap.style.transform = 'translate(-50%, -50%)';
         var formRect = signupForm.getBoundingClientRect();
         var formCenter = formRect.top + formRect.height / 2;
-        emailFieldOffset += viewportCenter - formCenter;
+        emailFieldOffset = viewportCenter - formCenter;
         signupWrap.style.transform = 'translate(-50%, calc(-50% + ' + emailFieldOffset + 'px))';
       }
 
