@@ -106,6 +106,12 @@
     body.email-focused .plakat-mockup {
       filter: blur(5px) brightness(0.55);
     }
+    body.email-focused .signup-wrap {
+      /* While focused, iOS keeps re-firing the viewport events that recompute
+         this position; animating each one on top of the last is what looked
+         like flicker, so snap instead of transitioning until it settles. */
+      transition: none;
+    }
     .signup-bar {
       display: flex;
     }
@@ -768,38 +774,35 @@
       }
       window.addEventListener('resize', updateSignupWrapAnchor);
 
+      // iOS fires several visualViewport resize/scroll events while the keyboard
+      // animates in, plus its own "scroll the focused input into view" nudge on
+      // the document itself (even though body is overflow:hidden and nothing
+      // here is meant to scroll). Funnel all of that through this one function
+      // instead of reacting to window 'scroll' and visualViewport events with
+      // two separate, independently-correcting listeners — running both at once
+      // made each one's correction retrigger the other, producing a visible
+      // flicker/jitter loop instead of settling.
       function centerEmailFieldInViewport() {
         if (!signupWrap || !signupForm) return;
         var vv = window.visualViewport;
         var viewportCenter = vv ? (vv.offsetTop + vv.height / 2) : (window.innerHeight / 2);
-        // iOS fires several visualViewport resize/scroll events while the keyboard
-        // animates in, each mid-transition. Measuring against the un-shifted base
-        // position (instead of accumulating on top of the last, possibly still-
-        // animating, offset) keeps this idempotent instead of compounding into a
-        // runaway offset that flings the field off-screen.
+        // Measuring against the un-shifted base position (instead of accumulating
+        // on top of the last, possibly still-animating, offset) keeps this
+        // idempotent instead of compounding into a runaway offset.
         signupWrap.style.transform = 'translate(-50%, -50%)';
         var formRect = signupForm.getBoundingClientRect();
         var formCenter = formRect.top + formRect.height / 2;
         emailFieldOffset = viewportCenter - formCenter;
         signupWrap.style.transform = 'translate(-50%, calc(-50% + ' + emailFieldOffset + 'px))';
+        if (window.scrollX !== 0 || window.scrollY !== 0) {
+          window.scrollTo(0, 0);
+        }
       }
 
       function resetSignupPosition() {
         if (!signupWrap) return;
         signupWrap.style.transform = '';
         emailFieldOffset = 0;
-      }
-
-      // iOS Safari scrolls the document to bring a focused input "into view"
-      // even though body is overflow:hidden and nothing here is meant to
-      // scroll — our own layout is fully handled via position:fixed plus
-      // centerEmailFieldInViewport(). Left alone, that native scroll shoves
-      // everything toward the bottom. Pin the document scroll back to 0
-      // whenever it moves while the field is focused.
-      function pinWindowScroll() {
-        if (window.scrollX !== 0 || window.scrollY !== 0) {
-          window.scrollTo(0, 0);
-        }
       }
 
       if (emailInput) {
@@ -813,8 +816,6 @@
         emailInput.addEventListener('focus', function () {
           document.body.classList.add('email-focused');
           centerEmailFieldInViewport();
-          pinWindowScroll();
-          window.addEventListener('scroll', pinWindowScroll, { passive: true });
           if (window.visualViewport) {
             window.visualViewport.addEventListener('resize', centerEmailFieldInViewport);
             window.visualViewport.addEventListener('scroll', centerEmailFieldInViewport);
@@ -823,7 +824,6 @@
 
         emailInput.addEventListener('blur', function () {
           document.body.classList.remove('email-focused');
-          window.removeEventListener('scroll', pinWindowScroll);
           if (window.visualViewport) {
             window.visualViewport.removeEventListener('resize', centerEmailFieldInViewport);
             window.visualViewport.removeEventListener('scroll', centerEmailFieldInViewport);
